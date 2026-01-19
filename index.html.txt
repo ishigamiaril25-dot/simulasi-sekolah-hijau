@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kepala Sekolah Simulator</title>
+<style>
+body {
+  margin: 0;
+  background: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+canvas {
+  image-rendering: pixelated;
+  border: 4px solid #4caf50;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="game" width="640" height="480"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const tileSize = 32;
+const cols = 20;
+const rows = 15;
+
+
+// MAP SEKOLAH (0 = rumput, 1 = kelas, 2 = kantin, 3 = lapangan)
+const map = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,1,1,1,0,0,0,2,2,2,0,0,0,3,3,3,0,0,0,0],
+  [0,1,1,1,0,0,0,2,2,2,0,0,0,3,3,3,0,0,0,0],
+  [0,1,1,1,0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+];
+
+// PLAYER (KEPALA SEKOLAH)
+const player = {
+  x: 5,
+  y: 5,
+  color: "#ffeb3b"
+};
+
+// NPC (Guru & Siswa)
+const npcs = [
+  {
+    x: 7,
+    y: 4,
+    color: "#2196f3",
+    dialog: "Guru: Kita perlu kebijakan pengurangan sampah plastik."
+  },
+  {
+    x: 12,
+    y: 2,
+    color: "#e91e63",
+    dialog: "Siswi: Kantin ramah lingkungan pasti lebih sehat!"
+  },
+  {
+    x: 14,
+    y: 5,
+    color: "#9c27b0",
+    dialog: "Siswa: Tolong jangan naikkan harga kantin, Pak."
+  }
+];
+
+const player = { ... };
+
+const npcs = [ ... ];
+
+const keys = {};
+
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
+
+function update() {
+  if (keys["ArrowUp"] || keys["w"]) player.y--;
+  if (keys["ArrowDown"] || keys["s"]) player.y++;
+  if (keys["ArrowLeft"] || keys["a"]) player.x--;
+  if (keys["ArrowRight"] || keys["d"]) player.x++;
+
+  player.x = Math.max(0, Math.min(cols - 1, player.x));
+  player.y = Math.max(0, Math.min(rows - 1, player.y));
+}
+
+function drawMap() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (map[y][x] === 0) ctx.fillStyle = "#4caf50"; // rumput
+      if (map[y][x] === 1) ctx.fillStyle = "#90a4ae"; // kelas
+      if (map[y][x] === 2) ctx.fillStyle = "#ffcc80"; // kantin
+      if (map[y][x] === 3) ctx.fillStyle = "#81c784"; // lapangan
+      ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+    }
+  }
+}
+
+function drawPlayer() {
+  ctx.fillStyle = player.color;
+  ctx.fillRect(
+    player.x * tileSize + 6,
+    player.y * tileSize + 6,
+    20,
+    20
+  );
+}
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  update();
+  drawMap();
+  drawPlayer();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
